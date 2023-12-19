@@ -13,11 +13,26 @@
     <dialog class="add-cat-dialog">
         <form action="" method="">
             <label for="cat-title">New Category:
-                <input type="text" id="cat-title" placeholder="ex: Work, Gym, ..." maxlength="50" required>
+                <input type="text" id="cat-title" placeholder="ex: Work, Gym, ..." maxlength="50" required name="title">
             </label>
-            <button id="add-cat-btn-dialog" autofocus>Add Category</button>
+            <button id="add-cat-btn-dialog" type="submit" autofocus>Add Category</button>
         </form>
         <button id="close-add-cat-dialog" autofocus>Close</button>
+    </dialog>
+    <dialog class="add-task-dialog">
+        <form action="" method="">
+            <label for="task-title">Task Name:
+                <input type="text" id="task-title" placeholder="ex: Complete Project Report" maxlength="50" required>
+            </label>
+            <label for="task-description">Task Description:
+                <input type="text" id="task-description" placeholder="ex: Write and finalize the project report for submission..." maxlength="150">
+            </label>
+            <label for="task-due-date">Task Due Date:
+                <input type="text" id="task-due-date" placeholder="ex: 2023-04-05 ..." maxlength="50" required>
+            </label>
+            <button id="add-task-btn-dialog" type="submit" autofocus>Add Task</button>
+        </form>
+        <button id="close-add-task-dialog" autofocus>Close</button>
     </dialog>
     <script src="main.js" defer></script>
 </body>
