@@ -23,7 +23,7 @@ workCategory.addTask(task2);
 const contentElement = document.querySelector(".content");
 
 
-// categories UI
+//// categories UI
 function createHeader() {
 const headerElement = document.createElement("header");
 const headerTitle = document.createElement("h1");
@@ -81,15 +81,21 @@ function addCategoryToCategoryList(category) {
 
     // Add event listener to the new category link
     const link = listItem.querySelector(".link");
-
     link.addEventListener("click", (e) => {
         const index = taskList.categories.findIndex((category) => category.name === e.target.textContent);
         showCorrespondingTasks(taskList.categories[index]);
+        const el = e.target;
+        activateClass(el);
     });
 
     deleteBtnEventListener();
 }
 
+function activateClass(el) {
+    const siblings = document.querySelectorAll(".link");
+    siblings.forEach(sibling => sibling.classList.remove("active-link"));
+    el.classList.add("active-link");
+}
 
 function initializeCategories() {
     addCategoryButton();
@@ -97,6 +103,14 @@ function initializeCategories() {
     addCategoryToCategoryList(studyCategory);
     addCategoryToCategoryList(personalCategory);
 
+}
+
+function initializeTaskContainer() {
+    const taskContainerElement = document.querySelector(".task-container");
+    const text = document.createElement("p");
+    text.textContent = "Click on a category to show the associated tasks";
+    text.classList.add("text");
+    taskContainerElement.appendChild(text);
 }
 
 function initializeScreen() {
@@ -108,13 +122,6 @@ function initializeScreen() {
 
 }
 
-function initializeTaskContainer() {
-    const taskContainerElement = document.querySelector(".task-container");
-    const text = document.createElement("p");
-    text.textContent = "Click on a category to show the associated tasks";
-    text.classList.add("text");
-    taskContainerElement.appendChild(text);
-}
 initializeScreen();
 
 // categories event listener
@@ -137,11 +144,14 @@ closeCatBtn.addEventListener("click", () => {
 addCatToListBtn.addEventListener("click", (e) => {
     e.preventDefault();
     const cat = new Category(`${catTitle.value}`);
-    addCategoryToCategoryList(cat);
-    taskList.addCategory(cat);
-    console.log(taskList);
-    addCatDialog.close();
-    catTitle.value = "";
+    if (catTitle.value) {
+        addCategoryToCategoryList(cat);
+        taskList.addCategory(cat);
+        console.log(taskList);
+        addCatDialog.close();
+        catTitle.value = "";
+    }
+
 });
 
 
@@ -149,18 +159,30 @@ function deleteBtnEventListener() {
     const deleteCatBtn = document.querySelectorAll(".delete-cat-btn");
     deleteCatBtn.forEach((button) => {
         button.addEventListener("click", (e) => {
-            console.log(e.target.parentElement.firstChild.textContent);
             const btnArr = Array.from(deleteCatBtn);
             const index = btnArr.indexOf(e.target);
-            console.log(index);
-            e.target.parentElement.remove();
-            taskList.deleteCategory(`${e.target.parentElement.firstChild.textContent}`);
-            console.log(taskList);
+
+            // retrieve all links
+            const associatedLink = e.target.parentElement.firstChild;
+            // refresh task-container only if the deleted link is active
+            if (associatedLink.classList.contains("active-link")) {
+                deleteCatElement(e)
+                taskContainer.innerHTML = "";
+                initializeTaskContainer();
+            } else {
+                deleteCatElement(e)
+            }
         });
     });
 }
 
 console.log(taskList);
+
+function deleteCatElement(e) {
+    e.target.parentElement.remove();
+    taskList.deleteCategory(`${e.target.parentElement.firstChild.textContent}`);
+    console.log(taskList);
+}
 
 // refresh the task-container section when clicking on a category
 const taskContainer = document.querySelector(".task-container");
