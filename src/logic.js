@@ -20,7 +20,11 @@ class Category {
     }
 
     addTask(task) {
-        this.tasks.push(task);
+        const taskExist = this.tasks.some((t) => t.title === task.title);
+        if (!taskExist) {
+            this.tasks.push(task);  
+        }
+
     }
 
     deleteTask(title) {
