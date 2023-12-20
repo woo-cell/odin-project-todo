@@ -232,6 +232,7 @@ function taskEventListeners() {
     const taskTitle = document.getElementById("task-title");
     const taskDescription = document.getElementById("task-description");
     const taskDueDate = document.getElementById("task-due-date");
+    const taskPriority = document.getElementById("task-priority");
 
     // add new task event listener
     addNewTaskBtn.addEventListener("click", () => {
@@ -250,7 +251,7 @@ function taskEventListeners() {
     addTaskBtnDialog.addEventListener("click", (e) => {
         e.preventDefault();
         if (taskTitle.value && taskDueDate.value) {
-            const task = new Task(`${taskTitle.value}`,`${taskDescription.value}`,`${taskDueDate.value}`);
+            const task = new Task(`${taskTitle.value}`,`${taskDescription.value}`,`${taskDueDate.value}`,`${taskPriority.value}`);
             const title = document.querySelector(".cat-heading");
             console.log(title);
             console.log(title.textContent);        
@@ -290,6 +291,15 @@ function addTaskCard(task) {
         const taskDueDate = document.createElement("p");
         taskDueDate.classList.add("task-due-date");
         taskDueDate.textContent = `Due Date: ${task.dueDate}`;
+
+        const taskPriority = document.createElement("p");
+        taskPriority.classList.add("task-priority");
+        if (task.priority) {
+            taskPriority.textContent = `Priority: ${task.priority}`;
+        } else {
+            taskPriority.textContent = `Priority: unset`;            
+        }
+
     
         const editTaskBtn = document.createElement("button");
         editTaskBtn.classList.add("edit-task-btn");
@@ -309,6 +319,7 @@ function addTaskCard(task) {
         card.appendChild(taskTitle);
         card.appendChild(taskDescription);
         card.appendChild(taskDueDate);
+        card.appendChild(taskPriority);
         card.appendChild(editTaskBtn);
         card.appendChild(deleteTaskBtn);
         card.appendChild(taskDoneBtn);
@@ -340,19 +351,26 @@ function editTaskButtonClickHandler(e) {
     const taskTitle = document.getElementById("e-task-title");
     const taskDescription = document.getElementById("e-task-description");
     const taskDueDate = document.getElementById("e-task-due-date");
+    const taskPriority = document.getElementById("e-task-priority");
 
     // retrieve current values of card
     const renderedTaskTitle = e.target.parentElement.firstChild.textContent.trim();
-    const renderedTaskDescription = e.target.previousElementSibling.previousElementSibling.textContent.trim();
-    const renderedDueDate = e.target.previousElementSibling.textContent.trim().replace("Due Date: ", "");
+    const renderedTaskDescription = e.target.previousElementSibling.previousElementSibling.previousElementSibling.textContent.trim();
+    const renderedDueDate = e.target.previousElementSibling.previousElementSibling.textContent.trim().replace("Due Date: ", "");
     renderedDueDate.replaceAll("-", " ");
-    console.log(renderedTaskDescription);
+    const renderedPriority = e.target.previousElementSibling.textContent.trim().replace("Priority: ", "");
+    console.log(renderedPriority);
 
     // show edit task modal onclick
     addTaskDialog.showModal();
     taskTitle.value = renderedTaskTitle;
     taskDescription.value = renderedTaskDescription;
     taskDueDate.value = renderedDueDate;
+    if (renderedPriority !== "unset") {
+        taskPriority.value = renderedPriority;
+    } else {
+        taskPriority.value = "low";
+    }
 
     // close "edit task" dialog
     closeAddTaskDialog.addEventListener("click", () => {
@@ -363,15 +381,19 @@ function editTaskButtonClickHandler(e) {
     addTaskBtnDialog.addEventListener("click", (e) => {
         e.preventDefault();
         if (taskTitle.value && taskDueDate.value) {
+            // find the current category
             const title = document.querySelector(".cat-heading");     
             const index = taskList.categories.findIndex((category) => category.name === title.textContent);
             console.log(index);
             const cat = taskList.categories[index];
+            // find the current task
             const taskIndex = cat.tasks.findIndex((task) => task.title === renderedTaskTitle);
             const task = cat.tasks[taskIndex];
+            // set new values
             task.title = taskTitle.value;
             task.description = taskDescription.value;
-            task.dueDate = taskDueDate.value;           
+            task.dueDate = taskDueDate.value;
+            task.priority = taskPriority.value;           
             console.log(taskList);
             updateCard(task,renderedTaskTitle);
             addTaskDialog.close();
@@ -388,14 +410,16 @@ const index = cardArr.findIndex((card) => card.firstChild.textContent.trim() ===
 console.log(allCards[index]);
 const currentCardContainer = allCards[index];
 
-// update the title and desc and duedate;
+// update the title, the description, the duedate and the priority;
 const title = currentCardContainer.querySelector(".task-title");
 const description = currentCardContainer.querySelector(".task-description");
 const dueDate = currentCardContainer.querySelector(".task-due-date");
+const priority = currentCardContainer.querySelector(".task-priority");
 
 title.textContent = task.title;
 description.textContent = task.description;
 dueDate.textContent = `Due Date: ${task.dueDate}`;
+priority.textContent = `Priority: ${task.priority}`
 }
 
 function taskDoneButtonClickHandler(e) {

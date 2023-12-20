@@ -20,7 +20,7 @@
         <button id="close-add-cat-dialog" autofocus>Close</button>
     </dialog>
     <dialog class="add-task-dialog">
-        <form action="" method="">
+        <form action="" method="" id="add-task-form">
             <label for="task-title">Task Name:
                 <input type="text" id="task-title" placeholder="ex: Complete Project Report" maxlength="50" required>
             </label>
@@ -30,13 +30,20 @@
             <label for="task-due-date">Task Due Date:
                 <input type="date" id="task-due-date" required>
             </label>
+            <label for="task-priority">Task Due Date:
+                <select name="priority" id="task-priority" form="add-task-form">
+                    <option value="low">Low Priority</option>
+                    <option value="medium">Medium Priority</option>
+                    <option value="high">High Priority</option>
+                  </select>
+            </label>
             <button id="add-task-btn-dialog" type="submit" autofocus>Add Task</button>
         </form>
         <button id="close-add-task-dialog" autofocus>Close</button>
     </dialog>
 
     <dialog class="e-task-dialog">
-        <form action="" method="">
+        <form action="" method="" id="e-task-form">
             <label for="e-task-title">Task Name:
                 <input type="text" id="e-task-title" maxlength="50" required>
             </label>
@@ -45,6 +52,13 @@
             </label>
             <label for="e-task-due-date">Task Due Date:
                 <input type="date" id="e-task-due-date" required>
+            </label>
+            <label for="e-task-priority">Task Due Date:
+                <select name="e-priority" id="e-task-priority" form="e-task-form">
+                    <option value="low">Low Priority</option>
+                    <option value="medium">Medium Priority</option>
+                    <option value="high">High Priority</option>
+                  </select>
             </label>
             <button id="e-add-task-btn-dialog" type="submit" autofocus>Edit Task</button>
         </form>
