@@ -38,3 +38,8 @@ dialog > form {
     flex-direction: column;
     gap: 20px;
 }
+
+.done > h3,
+.done > p {
+    text-decoration: line-through;
+}

@@ -34,6 +34,22 @@
         </form>
         <button id="close-add-task-dialog" autofocus>Close</button>
     </dialog>
+
+    <dialog class="e-task-dialog">
+        <form action="" method="">
+            <label for="e-task-title">Task Name:
+                <input type="text" id="e-task-title" maxlength="50" required>
+            </label>
+            <label for="e-task-description">Task Description:
+                <input type="text" id="e-task-description" maxlength="150">
+            </label>
+            <label for="e-task-due-date">Task Due Date:
+                <input type="date" id="e-task-due-date" required>
+            </label>
+            <button id="e-add-task-btn-dialog" type="submit" autofocus>Edit Task</button>
+        </form>
+        <button id="e-close-add-task-dialog" autofocus>Close</button>
+    </dialog>
     <script src="main.js" defer></script>
 </body>
 </html>

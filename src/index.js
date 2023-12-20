@@ -1,5 +1,6 @@
 import {TaskList,Category,Task} from "./logic.js";
 
+
 const taskList = new TaskList();
 const workCategory = new Category("work");
 const studyCategory = new Category("study");
@@ -248,21 +249,20 @@ function taskEventListeners() {
     // add new task dialog
     addTaskBtnDialog.addEventListener("click", (e) => {
         e.preventDefault();
-        const task = new Task(`${taskTitle.value}`,`${taskDescription.value}`,`${taskDueDate.value}`);
-        const title = document.querySelector(".cat-heading");
-        console.log(title);
-        console.log(title.textContent);        
-        const index = taskList.categories.findIndex((category) => category.name === title.textContent);
-        console.log(index);
-        const cat = taskList.categories[index];
-        cat.addTask(task);
-        console.log(cat);
-        addTaskCard(task);
-        addTaskDialog.close();
+        if (taskTitle.value && taskDueDate.value) {
+            const task = new Task(`${taskTitle.value}`,`${taskDescription.value}`,`${taskDueDate.value}`);
+            const title = document.querySelector(".cat-heading");
+            console.log(title);
+            console.log(title.textContent);        
+            const index = taskList.categories.findIndex((category) => category.name === title.textContent);
+            console.log(index);
+            const cat = taskList.categories[index];
+            cat.addTask(task);
+            console.log(cat);
+            addTaskCard(task);
+            addTaskDialog.close();
+        }
     });
-
-
-
 }
 
 function addTaskCard(task) {
@@ -289,22 +289,29 @@ function addTaskCard(task) {
         
         const taskDueDate = document.createElement("p");
         taskDueDate.classList.add("task-due-date");
-        taskDueDate.textContent = task.dueDate;
+        taskDueDate.textContent = `Due Date: ${task.dueDate}`;
     
         const editTaskBtn = document.createElement("button");
         editTaskBtn.classList.add("edit-task-btn");
         editTaskBtn.textContent = "Edit task";
-    
+        editTaskBtn.addEventListener("click",editTaskButtonClickHandler);
+
         const deleteTaskBtn = document.createElement("button");
         deleteTaskBtn.classList.add("delete-task-btn");
         deleteTaskBtn.textContent = "Delete task";
         deleteTaskBtn.addEventListener("click",deleteTaskButtonClickHandler);
+
+        const taskDoneBtn = document.createElement("button");
+        taskDoneBtn.classList.add("task-done-button");
+        taskDoneBtn.textContent = "Task Done";
+        taskDoneBtn.addEventListener("click",taskDoneButtonClickHandler);
     
         card.appendChild(taskTitle);
         card.appendChild(taskDescription);
         card.appendChild(taskDueDate);
         card.appendChild(editTaskBtn);
         card.appendChild(deleteTaskBtn);
+        card.appendChild(taskDoneBtn);
         container.appendChild(card);
     }
 
@@ -322,4 +329,89 @@ function deleteTaskButtonClickHandler(e) {
     taskList.categories[catIndex].deleteTask(taskName);
     e.target.parentElement.remove();
     console.log(taskList);
+}
+
+    // edit button listener
+function editTaskButtonClickHandler(e) {
+    // retrieve edit dialog elements
+    const addTaskDialog = document.querySelector(".e-task-dialog");
+    const closeAddTaskDialog = document.getElementById("e-close-add-task-dialog");
+    const addTaskBtnDialog = document.getElementById("e-add-task-btn-dialog");
+    const taskTitle = document.getElementById("e-task-title");
+    const taskDescription = document.getElementById("e-task-description");
+    const taskDueDate = document.getElementById("e-task-due-date");
+
+    // retrieve current values of card
+    const renderedTaskTitle = e.target.parentElement.firstChild.textContent.trim();
+    const renderedTaskDescription = e.target.previousElementSibling.previousElementSibling.textContent.trim();
+    const renderedDueDate = e.target.previousElementSibling.textContent.trim().replace("Due Date: ", "");
+    renderedDueDate.replaceAll("-", " ");
+    console.log(renderedTaskDescription);
+
+    // show edit task modal onclick
+    addTaskDialog.showModal();
+    taskTitle.value = renderedTaskTitle;
+    taskDescription.value = renderedTaskDescription;
+    taskDueDate.value = renderedDueDate;
+
+    // close "edit task" dialog
+    closeAddTaskDialog.addEventListener("click", () => {
+        addTaskDialog.close();
+    });
+
+    // edit task button dialog
+    addTaskBtnDialog.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (taskTitle.value && taskDueDate.value) {
+            const title = document.querySelector(".cat-heading");     
+            const index = taskList.categories.findIndex((category) => category.name === title.textContent);
+            console.log(index);
+            const cat = taskList.categories[index];
+            const taskIndex = cat.tasks.findIndex((task) => task.title === renderedTaskTitle);
+            const task = cat.tasks[taskIndex];
+            task.title = taskTitle.value;
+            task.description = taskDescription.value;
+            task.dueDate = taskDueDate.value;           
+            console.log(taskList);
+            updateCard(task,renderedTaskTitle);
+            addTaskDialog.close();
+        }
+    });
+}
+
+function updateCard(task,oldTitle) {
+
+// find the card with the old title
+const allCards = document.querySelectorAll(".card");
+const cardArr= Array.from(allCards);
+const index = cardArr.findIndex((card) => card.firstChild.textContent.trim() === oldTitle);
+console.log(allCards[index]);
+const currentCardContainer = allCards[index];
+
+// update the title and desc and duedate;
+const title = currentCardContainer.querySelector(".task-title");
+const description = currentCardContainer.querySelector(".task-description");
+const dueDate = currentCardContainer.querySelector(".task-due-date");
+
+title.textContent = task.title;
+description.textContent = task.description;
+dueDate.textContent = `Due Date: ${task.dueDate}`;
+}
+
+function taskDoneButtonClickHandler(e) {
+    // select current card
+const currentCard = e.target.parentElement;
+    // toggle class ".done" to the card (visual)
+currentCard.classList.toggle("done");
+    // select the corresponding task
+        // finding the category
+    const title = document.querySelector(".cat-heading");     
+    const index = taskList.categories.findIndex((category) => category.name === title.textContent);
+    console.log(index);
+    const cat = taskList.categories[index];
+        // finding the task
+    const taskIndex = cat.tasks.findIndex((task) => task.title === e.target.parentElement.firstChild.textContent.trim());
+    const task = cat.tasks[taskIndex];
+    // toggle task status
+    task.toggleTaskStatus();
 }

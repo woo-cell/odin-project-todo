@@ -39,7 +39,7 @@ class Task {
         this.dueDate = dueDate;
         this.completed = false;
     }
-
+    
     toggleTaskStatus() {
         this.completed = !this.completed;
     }
