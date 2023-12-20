@@ -77,19 +77,110 @@ function addCategoryButton() {
 function addCategoryToCategoryList(category) {
     const list = document.querySelector(".category-container > ul");
     const listItem = document.createElement("li");
-    listItem.innerHTML = `<a href="#" class="link">${category.name}</a><button class="delete-cat-btn">delete</button>`;
-    list.appendChild(listItem);
-
+    // listItem.innerHTML = `<a href="#" class="link">${category.name}</a><button class="delete-cat-btn">delete</button>`;
+    // create cat link
+    const catLink = document.createElement("a");
+    catLink.setAttribute("href", "#");
+    catLink.classList.add("link");
+    catLink.textContent = `${category.name}`;
     // Add event listener to the new category link
-    const link = listItem.querySelector(".link");
-    link.addEventListener("click", (e) => {
+    catLink.addEventListener("click", (e) => {
+        e.stopPropagation();
         const index = taskList.categories.findIndex((category) => category.name === e.target.textContent);
         showCorrespondingTasks(taskList.categories[index]);
         const el = e.target;
         activateClass(el);
     });
 
-    deleteBtnEventListener();
+    // create edit cat btn
+    const catEditBtn = document.createElement("button");
+    catEditBtn.classList.add("edit-cat-btn");
+    catEditBtn.textContent = "Edit category";
+    // add event listener to new edit cat btn
+    catEditBtn.addEventListener("click", editCategoryEventHandler);
+
+
+    // create delete cat btn
+    const catDeletebtn = document.createElement("button");
+    catDeletebtn.classList.add("delete-cat-btn");
+    catDeletebtn.textContent = "Delete category";
+    // add delete btn listener
+    catDeletebtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const deleteCatBtn = document.querySelectorAll(".delete-cat-btn");
+        const btnArr = Array.from(deleteCatBtn);
+        const index = btnArr.indexOf(e.target);
+
+        // retrieve all links
+        const associatedLink = e.target.parentElement.firstChild;
+        // refresh task-container only if the deleted link is active
+        if (associatedLink.classList.contains("active-link")) {
+            deleteCatElement(e)
+            taskContainer.innerHTML = "";
+            initializeTaskContainer();
+        } else {
+            deleteCatElement(e)
+        }
+        console.log(taskList);
+    });
+
+
+    listItem.appendChild(catLink);
+    listItem.appendChild(catEditBtn);
+    listItem.appendChild(catDeletebtn);
+    list.appendChild(listItem);
+
+
+
+    // deleteBtnEventListener();
+}
+
+function editCategoryEventHandler(e) {
+    e.stopPropagation();
+    console.log("you clicked on edit");
+    // retrieve all the inputs and buttons from modal
+    const editModal = document.querySelector(".e-cat-dialog");
+    const editCatTitle = document.getElementById("e-cat-title");
+    const closeEditCatBtn = document.getElementById("close-e-cat-dialog");
+    const saveChangesBtn = document.getElementById("e-cat-btn-dialog");
+    
+    // retrieve the link element
+    const linkElement = e.target.parentElement.firstChild;
+
+    // show the modal with current value as value
+    const currentTitleValue = e.target.parentElement.firstChild.textContent.trim();
+    editCatTitle.value = currentTitleValue;
+    editModal.showModal();
+
+    closeEditCatBtn.addEventListener("click", () => {
+        editModal.close();
+    });
+
+    saveChangesBtn.addEventListener("click", saveChangesHandler);
+
+    function saveChangesHandler(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        const newTitle = document.getElementById("e-cat-title");
+        // add input value to tasklist
+        const links = document.querySelectorAll(".link");
+        const linkArr = Array.from(links);
+        const index = linkArr.findIndex((link) => link.textContent.trim() === currentTitleValue);
+        let ctgrName = taskList.categories[index].name;
+        taskList.categories[index].name = newTitle.value;
+        ctgrName = newTitle.value;
+        console.log(ctgrName);
+        console.log(taskList);
+        // update the link accordingly
+        linkElement.textContent = `${ctgrName}`;
+        editModal.close();
+        // refresh task container
+        showCorrespondingTasks(taskList.categories[index]);
+
+
+        // Remove the event listener after it's been executed
+        saveChangesBtn.removeEventListener("click", saveChangesHandler);
+    }
 }
 
 function activateClass(el) {
@@ -182,7 +273,6 @@ console.log(taskList);
 function deleteCatElement(e) {
     e.target.parentElement.remove();
     taskList.deleteCategory(`${e.target.parentElement.firstChild.textContent}`);
-    console.log(taskList);
 }
 
 // refresh the task-container section when clicking on a category

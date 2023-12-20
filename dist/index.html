@@ -10,6 +10,7 @@
     <div class="content">
 
     </div>
+
     <dialog class="add-cat-dialog">
         <form action="" method="">
             <label for="cat-title">New Category:
@@ -19,6 +20,17 @@
         </form>
         <button id="close-add-cat-dialog" autofocus>Close</button>
     </dialog>
+
+    <dialog class="e-cat-dialog">
+        <form action="" method="">
+            <label for="e-cat-title">Edit Category:
+                <input type="text" id="e-cat-title" placeholder="ex: Work, Gym, ..." maxlength="50"  name="title" required>
+            </label>
+            <button id="e-cat-btn-dialog" type="submit" autofocus>Edit Category</button>
+        </form>
+        <button id="close-e-cat-dialog" autofocus>Close</button>
+    </dialog>
+
     <dialog class="add-task-dialog">
         <form action="" method="" id="add-task-form">
             <label for="task-title">Task Name:
@@ -64,6 +76,7 @@
         </form>
         <button id="e-close-add-task-dialog" autofocus>Close</button>
     </dialog>
+
     <script src="main.js" defer></script>
 </body>
 </html>
