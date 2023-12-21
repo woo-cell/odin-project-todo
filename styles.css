@@ -245,3 +245,8 @@ dialog > form {
 .task-priority {
     color: #525151;
 }
+
+.text {
+    margin-top: 120px;
+    text-align: center;
+}
