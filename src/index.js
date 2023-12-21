@@ -1,23 +1,7 @@
-import {TaskList,Category,Task} from "./logic.js";
+import {TaskList,Category,Task} from "./task.js";
+import {initializeApp,saveTaskListToLocalStorage} from "./storage.js";
 
-
-const taskList = new TaskList();
-const workCategory = new Category("work");
-const studyCategory = new Category("study");
-const personalCategory = new Category("personal");
-taskList.addCategory(workCategory);
-taskList.addCategory(studyCategory);
-taskList.addCategory(personalCategory);
-
-
-// creating some task instances
-const task1 = new Task("Task 1", "Description of Task 1", "2023-01-01");
-const task2 = new Task("Task 2", "Description of Task 2", "2023-02-01");
-const task3 = new Task("Task 3", "Description of Task 3", "2023-03-01");
-const task4 = new Task("Task 4", "Description of Task 4", "2023-04-01");
-const task5 = new Task("Task 5", "Description of Task 5", "2023-05-01");
-workCategory.addTask(task1);
-workCategory.addTask(task2);
+const taskList = initializeApp();
 
 
 //retrieve the content element
@@ -95,7 +79,7 @@ function addCategoryToCategoryList(category) {
     // create edit cat btn
     const catEditBtn = document.createElement("button");
     catEditBtn.classList.add("edit-cat-btn");
-    catEditBtn.textContent = "Edit category";
+    catEditBtn.textContent = "edit";
     // add event listener to new edit cat btn
     catEditBtn.addEventListener("click", editCategoryEventHandler);
 
@@ -103,7 +87,7 @@ function addCategoryToCategoryList(category) {
     // create delete cat btn
     const catDeletebtn = document.createElement("button");
     catDeletebtn.classList.add("delete-cat-btn");
-    catDeletebtn.textContent = "Delete category";
+    catDeletebtn.textContent = "delete";
     // add delete btn listener
     catDeletebtn.addEventListener("click", (e) => {
         e.stopPropagation();
@@ -180,6 +164,9 @@ function editCategoryEventHandler(e) {
 
         // Remove the event listener after it's been executed
         saveChangesBtn.removeEventListener("click", saveChangesHandler);
+
+        // save it to locale storage
+        saveTaskListToLocalStorage()
     }
 }
 
@@ -191,9 +178,12 @@ function activateClass(el) {
 
 function initializeCategories() {
     addCategoryButton();
-    addCategoryToCategoryList(workCategory);
-    addCategoryToCategoryList(studyCategory);
-    addCategoryToCategoryList(personalCategory);
+    taskList.categories.forEach((category, index) => {
+        addCategoryToCategoryList(taskList.categories[index]);
+    });
+
+    // addCategoryToCategoryList(taskList.categories[1]);
+    // addCategoryToCategoryList(taskList.categories[2]);
 
 }
 
@@ -242,6 +232,8 @@ addCatToListBtn.addEventListener("click", (e) => {
         console.log(taskList);
         addCatDialog.close();
         catTitle.value = "";
+
+        saveTaskListToLocalStorage();
     }
 
 });
@@ -273,6 +265,8 @@ console.log(taskList);
 function deleteCatElement(e) {
     e.target.parentElement.remove();
     taskList.deleteCategory(`${e.target.parentElement.firstChild.textContent}`);
+
+    saveTaskListToLocalStorage();
 }
 
 // refresh the task-container section when clicking on a category
@@ -352,6 +346,8 @@ function taskEventListeners() {
             console.log(cat);
             addTaskCard(task);
             addTaskDialog.close();
+
+            saveTaskListToLocalStorage()
         }
     });
 }
@@ -393,17 +389,17 @@ function addTaskCard(task) {
     
         const editTaskBtn = document.createElement("button");
         editTaskBtn.classList.add("edit-task-btn");
-        editTaskBtn.textContent = "Edit task";
+        editTaskBtn.textContent = "edit";
         editTaskBtn.addEventListener("click",editTaskButtonClickHandler);
 
         const deleteTaskBtn = document.createElement("button");
         deleteTaskBtn.classList.add("delete-task-btn");
-        deleteTaskBtn.textContent = "Delete task";
+        deleteTaskBtn.textContent = "delete";
         deleteTaskBtn.addEventListener("click",deleteTaskButtonClickHandler);
 
         const taskDoneBtn = document.createElement("button");
         taskDoneBtn.classList.add("task-done-button");
-        taskDoneBtn.textContent = "Task Done";
+        taskDoneBtn.textContent = "done";
         taskDoneBtn.addEventListener("click",taskDoneButtonClickHandler);
     
         card.appendChild(taskTitle);
@@ -430,6 +426,8 @@ function deleteTaskButtonClickHandler(e) {
     taskList.categories[catIndex].deleteTask(taskName);
     e.target.parentElement.remove();
     console.log(taskList);
+
+    saveTaskListToLocalStorage()
 }
 
     // edit button listener
@@ -476,6 +474,7 @@ function editTaskButtonClickHandler(e) {
             const index = taskList.categories.findIndex((category) => category.name === title.textContent);
             console.log(index);
             const cat = taskList.categories[index];
+            console.log(cat);
             // find the current task
             const taskIndex = cat.tasks.findIndex((task) => task.title === renderedTaskTitle);
             const task = cat.tasks[taskIndex];
@@ -486,7 +485,10 @@ function editTaskButtonClickHandler(e) {
             task.priority = taskPriority.value;           
             console.log(taskList);
             updateCard(task,renderedTaskTitle);
+            
             addTaskDialog.close();
+
+            saveTaskListToLocalStorage()
         }
     });
 }
@@ -528,4 +530,43 @@ currentCard.classList.toggle("done");
     const task = cat.tasks[taskIndex];
     // toggle task status
     task.toggleTaskStatus();
+
+    saveTaskListToLocalStorage()
 }
+
+
+// function storageAvailable(type) {
+//     let storage;
+//     try {
+//       storage = window[type];
+//       const x = "__storage_test__";
+//       storage.setItem(x, x);
+//       storage.removeItem(x);
+//       return true;
+//     } catch (e) {
+//       return (
+//         e instanceof DOMException &&
+//         // everything except Firefox
+//         (e.code === 22 ||
+//           // Firefox
+//           e.code === 1014 ||
+//           // test name field too, because code might not be present
+//           // everything except Firefox
+//           e.name === "QuotaExceededError" ||
+//           // Firefox
+//           e.name === "NS_ERROR_DOM_QUOTA_REACHED") &&
+//         // acknowledge QuotaExceededError only if there's something already stored
+//         storage &&
+//         storage.length !== 0
+//       );
+//     }
+//   }
+
+//   if (storageAvailable("localStorage")) {
+//     console.log("yes");
+//   } else {
+//     // Too bad, no localStorage for us
+//   }
+
+// let string = JSON.stringify(taskList);
+// console.log(string);
