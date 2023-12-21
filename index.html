@@ -12,26 +12,27 @@
     </div>
 
     <dialog class="add-cat-dialog">
+        <button id="close-add-cat-dialog" autofocus>X</button>
         <form action="" method="">
             <label for="cat-title">New Category:
                 <input type="text" id="cat-title" placeholder="ex: Work, Gym, ..." maxlength="50"  name="title" required>
             </label>
             <button id="add-cat-btn-dialog" type="submit" autofocus>Add Category</button>
         </form>
-        <button id="close-add-cat-dialog" autofocus>Close</button>
     </dialog>
 
     <dialog class="e-cat-dialog">
+        <button id="close-e-cat-dialog" autofocus>X</button>
         <form action="" method="">
             <label for="e-cat-title">Edit Category:
                 <input type="text" id="e-cat-title" placeholder="ex: Work, Gym, ..." maxlength="50"  name="title" required>
             </label>
-            <button id="e-cat-btn-dialog" type="submit" autofocus>Edit Category</button>
+            <button id="e-cat-btn-dialog" type="submit" autofocus>Confirm changes</button>
         </form>
-        <button id="close-e-cat-dialog" autofocus>Close</button>
     </dialog>
 
     <dialog class="add-task-dialog">
+        <button id="close-add-task-dialog" autofocus>X</button>
         <form action="" method="" id="add-task-form">
             <label for="task-title">Task Name:
                 <input type="text" id="task-title" placeholder="ex: Complete Project Report" maxlength="50" required>
@@ -51,10 +52,10 @@
             </label>
             <button id="add-task-btn-dialog" type="submit" autofocus>Add Task</button>
         </form>
-        <button id="close-add-task-dialog" autofocus>Close</button>
     </dialog>
 
     <dialog class="e-task-dialog">
+        <button id="e-close-add-task-dialog" autofocus>X</button>
         <form action="" method="" id="e-task-form">
             <label for="e-task-title">Task Name:
                 <input type="text" id="e-task-title" maxlength="50" required>
@@ -72,9 +73,8 @@
                     <option value="high">High Priority</option>
                   </select>
             </label>
-            <button id="e-add-task-btn-dialog" type="submit" autofocus>Edit Task</button>
+            <button id="e-add-task-btn-dialog" type="submit" autofocus>Confirm changes</button>
         </form>
-        <button id="e-close-add-task-dialog" autofocus>Close</button>
     </dialog>
 
     <script src="main.js" defer></script>
